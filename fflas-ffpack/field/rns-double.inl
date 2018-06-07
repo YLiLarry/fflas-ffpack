@@ -36,10 +36,11 @@ namespace FFPACK {
 // Arns must be an array of m*n*_size
 // abs(||A||) < 2^(16k)
 // Arns: output
-// rda: A._stride ??
 // A: inputs
-// lda: ???
-// k: s' in the paper
+// lda: ??? (number of columns of A??)
+// rda: number of rows of Arns
+// k: number of rows of matrix A_beta (A_beta is the matrix C in Eric's paper),
+//    equivalently, number of columns of matrix _crt_in.data()
 // A_beta: matrix C in the paper
 inline void rns_double::init(size_t m, size_t n, double* Arns, size_t rda, const integer* A, size_t lda, size_t k, bool RNS_MAJOR) const
 {
@@ -61,17 +62,18 @@ inline void rns_double::init(size_t m, size_t n, double* Arns, size_t rda, const
         // iteration on the j-th column
         for (size_t j = 0; j < n; j++) {
             size_t idx = j + i * n;
+            // mystery: what is lda? seems to do the same thing as n
             const mpz_t* m0 = reinterpret_cast<const mpz_t*>(Aiter + j + i * lda);
             const uint16_t* m0_ptr = reinterpret_cast<const uint16_t*>(m0[0]->_mp_d);
             size_t l = 0;
             // integer::size() returns the # machine words used
             // sizeof(mp_limb_t) is the byte-size of gmp multi-precision integer that fits in a word
             // divide by 2 to get the number of 16-bits chunks
-            // mystery: what is lda? seems to do the same thing as n
             size_t maxs = std::min(k, (Aiter[j + i * lda].size()) * sizeof(mp_limb_t) / 2); // to ensure 32 bits portability
 
 #ifdef __FFLASFFPACK_HAVE_LITTLE_ENDIAN
             if (m0[0]->_mp_size >= 0)
+                // iterate on the (l,idx) index
                 for (; l < maxs; l++)
                     A_beta[l + idx * k] = m0_ptr[l];
             else
@@ -103,6 +105,16 @@ inline void rns_double::init(size_t m, size_t n, double* Arns, size_t rda, const
         FFLAS::fgemm(Givaro::ZRing<double>(), FFLAS::FflasNoTrans, FFLAS::FflasTrans, _size, mn, k, 1.0, _crt_in.data(), _ldm, A_beta, k, 0., Arns, rda,
             FFLAS::ParSeqHelper::Parallel<FFLAS::CuttingStrategy::Recursive, FFLAS::StrategyParameter::TwoDAdaptive>());
 #else
+        // https://developer.apple.com/documentation/accelerate/1513282-cblas_dgemm?language=objc
+        // Arns: the product of matrix multiplication
+        // _size: # rows in matrix _crt_in and Arns
+        // mn: # columns in A_beta and Arns
+        // 0: beta scalar constant
+        // 1: alpha scalar constant
+        // rda: number of rows of Arns
+        // k: number of rows of matrix A_beta (A_beta is the matrix C in Eric's paper),
+        //    equivalently, number of columns of matrix _crt_in.data()
+        // _ldm: first dimension of _crt_in.data() (the matrix B in Eric's paper)
         cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasTrans, (int)_size, (int)mn, (int)k, 1.0, _crt_in.data(), (int)_ldm, A_beta, (int)k, 0., Arns, (int)rda);
 #endif
         tfgemm.stop();
