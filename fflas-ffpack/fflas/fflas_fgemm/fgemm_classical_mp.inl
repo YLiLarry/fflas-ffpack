@@ -307,10 +307,10 @@ fgemm(const Givaro::ZRing<Givaro::Integer> &F, const FFLAS_TRANSPOSE ta, const F
 
 #ifdef PROFILE_FGEMM_MP
     chrono.stop();
-    std::cout << "-------------------------------" << std::endl;
-    std::cout << "FGEMM_MP: nb prime: " << RNS._size << std::endl;
-    std::cout << "FGEMM_MP:  product: " << RNS._M.bitsize() << " bits" << std::endl;
-    std::cout << "FGEMM_MP:     init: " << uint64_t(chrono.realtime() * 1000) << "ms" << std::endl;
+    std::cerr << "-------------------------------" << std::endl;
+    std::cerr << "FGEMM_MP: nb prime: " << RNS._size << std::endl;
+    std::cerr << "FGEMM_MP:  product: " << RNS._M.bitsize() << " bits" << std::endl;
+    std::cerr << "FGEMM_MP:     init: " << uint64_t(chrono.realtime() * 1000) << "ms" << std::endl;
     chrono.start();
 #endif
 
@@ -320,7 +320,7 @@ fgemm(const Givaro::ZRing<Givaro::Integer> &F, const FFLAS_TRANSPOSE ta, const F
 
 #ifdef PROFILE_FGEMM_MP
     chrono.stop();
-    std::cout << "FGEMM_MP:   to RNS: " << uint64_t(chrono.realtime() * 1000) << "ms" << std::endl;
+    std::cerr << "FGEMM_MP:   to RNS: " << uint64_t(chrono.realtime() * 1000) << "ms" << std::endl;
     chrono.start();
 #endif
 
@@ -338,7 +338,7 @@ fgemm(const Givaro::ZRing<Givaro::Integer> &F, const FFLAS_TRANSPOSE ta, const F
 
 #ifdef PROFILE_FGEMM_MP
     chrono.stop();
-    std::cout << "FGEMM_MP:  RNS Mul: " << uint64_t(chrono.realtime() * 1000) << "ms" << std::endl;
+    std::cerr << "FGEMM_MP:  RNS Mul: " << uint64_t(chrono.realtime() * 1000) << "ms" << std::endl;
     chrono.start();
 #endif
 
@@ -350,8 +350,8 @@ fgemm(const Givaro::ZRing<Givaro::Integer> &F, const FFLAS_TRANSPOSE ta, const F
     FFLAS::fflas_delete(Cp);
 #ifdef PROFILE_FGEMM_MP
     chrono.stop();
-    std::cout << "FGEMM_MP: from RNS: " << uint64_t(chrono.realtime() * 1000) << "ms" << std::endl;
-    std::cout << "-------------------------------" << std::endl;
+    std::cerr << "FGEMM_MP: from RNS: " << uint64_t(chrono.realtime() * 1000) << "ms" << std::endl;
+    std::cerr << "-------------------------------" << std::endl;
 #endif
 
     return C;
@@ -524,9 +524,9 @@ inline RecInt::ruint<K1> *fgemm(const Givaro::Modular<RecInt::ruint<K1>, RecInt:
 
     mC = 2 * uint64_t(k) * mA * mB *
          abs(Givaro::Integer(alpha)); // need to use 2x bound to reach both positive and negative
-    // std::cout<<"mA= "<<mA<< "  ("<<mA.bitsize()<<")\n";
-    // std::cout<<"mB= "<<mB<< "  ("<<mB.bitsize()<<")\n";
-    // std::cout<<"mC= "<<mC<< "  ("<<mC.bitsize()<<")\n";
+    // std::cerr<<"mA= "<<mA<< "  ("<<mA.bitsize()<<")\n";
+    // std::cerr<<"mB= "<<mB<< "  ("<<mB.bitsize()<<")\n";
+    // std::cerr<<"mC= "<<mC<< "  ("<<mC.bitsize()<<")\n";
     // construct an RNS structure and its associated Domain
     FFPACK::rns_double RNS(mC, prime_bitsize);
 
@@ -557,9 +557,9 @@ inline RecInt::ruint<K1> *fgemm(const Givaro::Modular<RecInt::ruint<K1>, RecInt:
 
 #ifdef PROFILE_FGEMM_MP
     chrono.stop();
-    std::cout << "-------------------------------" << std::endl;
-    std::cout << "FGEMM_MP: nb prime: " << RNS._size << std::endl;
-    std::cout << "FGEMM_MP:     init: " << uint64_t(chrono.realtime() * 1000) << "ms" << std::endl;
+    std::cerr << "-------------------------------" << std::endl;
+    std::cerr << "FGEMM_MP: nb prime: " << RNS._size << std::endl;
+    std::cerr << "FGEMM_MP:     init: " << uint64_t(chrono.realtime() * 1000) << "ms" << std::endl;
     chrono.start();
 #endif
 
@@ -569,7 +569,7 @@ inline RecInt::ruint<K1> *fgemm(const Givaro::Modular<RecInt::ruint<K1>, RecInt:
 
 #ifdef PROFILE_FGEMM_MP
     chrono.stop();
-    std::cout << "FGEMM_MP:   to RNS: " << uint64_t(chrono.realtime() * 1000) << "ms" << std::endl;
+    std::cerr << "FGEMM_MP:   to RNS: " << uint64_t(chrono.realtime() * 1000) << "ms" << std::endl;
     chrono.start();
 #endif
 
@@ -587,7 +587,7 @@ inline RecInt::ruint<K1> *fgemm(const Givaro::Modular<RecInt::ruint<K1>, RecInt:
 
 #ifdef PROFILE_FGEMM_MP
     chrono.stop();
-    std::cout << "FGEMM_MP:  RNS Mul: " << uint64_t(chrono.realtime() * 1000) << "ms" << std::endl;
+    std::cerr << "FGEMM_MP:  RNS Mul: " << uint64_t(chrono.realtime() * 1000) << "ms" << std::endl;
     chrono.start();
 #endif
 
@@ -600,8 +600,8 @@ inline RecInt::ruint<K1> *fgemm(const Givaro::Modular<RecInt::ruint<K1>, RecInt:
     FFLAS::fflas_delete(Cp);
 #ifdef PROFILE_FGEMM_MP
     chrono.stop();
-    std::cout << "FGEMM_MP: from RNS: " << uint64_t(chrono.realtime() * 1000) << "ms" << std::endl;
-    std::cout << "-------------------------------" << std::endl;
+    std::cerr << "FGEMM_MP: from RNS: " << uint64_t(chrono.realtime() * 1000) << "ms" << std::endl;
+    std::cerr << "-------------------------------" << std::endl;
 #endif
 
     return C;
